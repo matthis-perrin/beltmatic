@@ -1,0 +1,73 @@
+{
+  "folders": [
+    {
+      "path": "shared"
+    },
+    {
+      "path": "shared-web"
+    },
+    {
+      "path": "website"
+    },
+    {
+      "path": "terraform"
+    },
+    {
+      "path": ".",
+      "name": "root"
+    }
+  ],
+  "settings": {
+    "window.title": "beltmatic${separator}${activeEditorShort}",
+    "files.exclude": {
+      "shared": true,
+      "shared-node": true,
+      "shared-web": true,
+      "website": true,
+      "terraform": true
+    },
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "explorer.confirmDelete": false,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "eslint.lintTask.enable": true,
+    "eslint.useESLintClass": true,
+    "eslint.options": {
+      "reportUnusedDisableDirectives": "warn"
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "never",
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.linkedEditing": true,
+    "emmet.showExpandedAbbreviation": "never",
+    "files.associations": {
+      "*.tf": "terraform"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[terraform]": {
+      "editor.defaultFormatter": "hashicorp.terraform"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "VisualStudioExptTeam.vscodeintellicode",
+      "styled-components.vscode-styled-components",
+      "naumovs.color-highlight",
+      "eamodio.gitlens",
+      "hashicorp.terraform"
+    ]
+  }
+}

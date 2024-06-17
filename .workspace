@@ -1,0 +1,541 @@
+{
+  "files": [
+    {
+      "path": ".gitignore",
+      "hash": "b035b5b5b6773cfd9db408aea9e1ce3f"
+    },
+    {
+      "path": ".vscode/react-component.code-snippets",
+      "hash": "b200702aa5072e77916353f18ed7a24e"
+    },
+    {
+      "path": "app.code-workspace",
+      "hash": "2fb3f754f9136dd19d1313e901ad5f7e"
+    },
+    {
+      "path": "build.js",
+      "hash": "7151f0d3f6545b25366c50b19d0e5a26"
+    },
+    {
+      "path": "deploy.js",
+      "hash": "fb7f415d670ca3f65cd0023882d01bf5"
+    },
+    {
+      "path": "package.json",
+      "hash": "21251594a850f5e0b11a68f202c05366"
+    },
+    {
+      "path": "setup.js",
+      "hash": "aead7070ac363db1b0bd4c8108170974"
+    },
+    {
+      "path": "shared-node/package.json",
+      "hash": "60e91ea947b0522d4b33932770b4a206"
+    },
+    {
+      "path": "shared-node/src/api/api_cloudfront_origin.ts",
+      "hash": "e2c2aee4494070509ac9b51350da2132"
+    },
+    {
+      "path": "shared-node/src/api/api_interface.ts",
+      "hash": "0f1f6c8f319f4eccc49c264c1a7ca5a9"
+    },
+    {
+      "path": "shared-node/src/api/api_lambda.ts",
+      "hash": "87b6779c6e263e7e3d9e827149d0e22d"
+    },
+    {
+      "path": "shared-node/src/api/api_router.ts",
+      "hash": "fecb394a6d638fe371f4e998a91df725"
+    },
+    {
+      "path": "shared-node/src/api/api_session.ts",
+      "hash": "e74da844174ca5341a50485cac67cb4d"
+    },
+    {
+      "path": "shared-node/src/api/api_statics.ts",
+      "hash": "68255535e4e50cbcf9d725d035d55c0f"
+    },
+    {
+      "path": "shared-node/src/aws/credentials.ts",
+      "hash": "8cc956b3feca2276aa25f30aa62e8187"
+    },
+    {
+      "path": "shared-node/src/aws/dynamodb.ts",
+      "hash": "861b06487c07dbe22d3e5846e018d207"
+    },
+    {
+      "path": "shared-node/src/aws/lambda.ts",
+      "hash": "2e2f1424858dafabdda066bb53c56faa"
+    },
+    {
+      "path": "shared-node/src/aws/s3.ts",
+      "hash": "8e6ab3c3d2cdf9a0dbf6b5c678778dd2"
+    },
+    {
+      "path": "shared-node/src/aws/ses.ts",
+      "hash": "5f97c3553ad40c065ae6f7c25d2fb9f7"
+    },
+    {
+      "path": "shared-node/src/aws/sts.ts",
+      "hash": "0e8e5f2c7f563b28e97fafa195af333b"
+    },
+    {
+      "path": "shared-node/src/example.test.ts",
+      "hash": "566fd9788e15c0098ef1120a94c56d87"
+    },
+    {
+      "path": "shared-node/src/lib/gzip.ts",
+      "hash": "53a879992467b2a128c7a29867581db2"
+    },
+    {
+      "path": "shared-node/src/lib/hash.ts",
+      "hash": "75b2d7080b6e64ffa8b047d2f22bdeb1"
+    },
+    {
+      "path": "shared-node/src/lib/lock.ts",
+      "hash": "c7f1c5d1c7c45d4dc3254b1bea3c2842"
+    },
+    {
+      "path": "shared-node/src/lib/rand_safe.ts",
+      "hash": "b097d55ab70c8c6e2cf58c3c35f22527"
+    },
+    {
+      "path": "shared-node/src/lib/retry.ts",
+      "hash": "76d598952f3e40229984dc1a3a8e0d92"
+    },
+    {
+      "path": "shared-node/src/lib/symmetric_encryption.ts",
+      "hash": "6c2d5c93fb44d3e0cd4a86af9b919158"
+    },
+    {
+      "path": "shared-node/src/lib/time_utils.ts",
+      "hash": "6242ced6090fd88927e3645da992b788"
+    },
+    {
+      "path": "shared-node/tsconfig.json",
+      "hash": "f99b25971c1fceee843890998a9e860f"
+    },
+    {
+      "path": "shared-node/webpack.config.js",
+      "hash": "1ef943c6da92b4ba955e02f073c41aa5"
+    },
+    {
+      "path": "shared-web/package.json",
+      "hash": "1f42739149c1f0d31414ebe347d83443"
+    },
+    {
+      "path": "shared-web/src/components/core/button.tsx",
+      "hash": "42961fa9561b878f4a0ddf49a9d78375"
+    },
+    {
+      "path": "shared-web/src/components/core/calendar.tsx",
+      "hash": "be57ab2a9269b83f8710390bca5c54cd"
+    },
+    {
+      "path": "shared-web/src/components/core/checkbox.tsx",
+      "hash": "fa800c2cf5510ed483781edeb7204cc0"
+    },
+    {
+      "path": "shared-web/src/components/core/css_reset.tsx",
+      "hash": "9433306bf07cf92fd3b22a820b737467"
+    },
+    {
+      "path": "shared-web/src/components/core/date_input.tsx",
+      "hash": "5d77cbe908e757ff3995eab7cdc14e4b"
+    },
+    {
+      "path": "shared-web/src/components/core/global_styles.tsx",
+      "hash": "1aae734b5bd73f02334b5607616cecc0"
+    },
+    {
+      "path": "shared-web/src/components/core/input.tsx",
+      "hash": "f211484094b12f0843f80182c46d2d6e"
+    },
+    {
+      "path": "shared-web/src/components/core/label.tsx",
+      "hash": "63b817911c50689ed1e3bc06661ecc08"
+    },
+    {
+      "path": "shared-web/src/components/core/loading_indicator.tsx",
+      "hash": "26b0add701be68a9e7c6560398fbd17b"
+    },
+    {
+      "path": "shared-web/src/components/core/modal.tsx",
+      "hash": "82c7a511df2010552b618da0d7cf259f"
+    },
+    {
+      "path": "shared-web/src/components/core/notifications.tsx",
+      "hash": "a04b28524bb16e14adb16fa467adb4f4"
+    },
+    {
+      "path": "shared-web/src/components/core/overlay.tsx",
+      "hash": "07f50aee4096f129d4fcfd8d2db5f1bf"
+    },
+    {
+      "path": "shared-web/src/components/core/radio.tsx",
+      "hash": "360ab26e202f5dbc776a1f25e7a79016"
+    },
+    {
+      "path": "shared-web/src/components/core/radios.tsx",
+      "hash": "875b1f0132ad25e400d9876b016a25a7"
+    },
+    {
+      "path": "shared-web/src/components/core/spacing.tsx",
+      "hash": "ba5aa7a55482cf45137bbdf0b5d328a8"
+    },
+    {
+      "path": "shared-web/src/components/core/svg_icon.tsx",
+      "hash": "f0bd5f39eba9909fef690f768bd89ab5"
+    },
+    {
+      "path": "shared-web/src/components/core/textarea.tsx",
+      "hash": "3e0de57e7b6d0412cac08b7aa93549fc"
+    },
+    {
+      "path": "shared-web/src/components/core/time_picker.tsx",
+      "hash": "78c3bba32bd0e02bd4e8434691764626"
+    },
+    {
+      "path": "shared-web/src/components/icons/check_icon.tsx",
+      "hash": "c1c86b962c7f21798c4891f8844a3dde"
+    },
+    {
+      "path": "shared-web/src/components/icons/chevron_down_icon.tsx",
+      "hash": "ddb363d29cedb4826f1e988eb1fb338c"
+    },
+    {
+      "path": "shared-web/src/components/icons/chevron_left_icon.tsx",
+      "hash": "7200f4fc65bbc39bbcf6bc0611baa175"
+    },
+    {
+      "path": "shared-web/src/components/icons/chevron_right_icon.tsx",
+      "hash": "e8e8539352ab983f8f9ec4d5ea1b9646"
+    },
+    {
+      "path": "shared-web/src/components/icons/chevron_up_icon.tsx",
+      "hash": "a2c5b893208e302e43c1e2e60e034f5e"
+    },
+    {
+      "path": "shared-web/src/components/icons/cross_icon.tsx",
+      "hash": "9d1dee46cfba481b302f8f5bf999f6cf"
+    },
+    {
+      "path": "shared-web/src/components/icons/download_icon.tsx",
+      "hash": "1960c60c33a29131b7919c7930932a69"
+    },
+    {
+      "path": "shared-web/src/components/icons/external_link_icon.tsx",
+      "hash": "06dd154943be053feb8c3cfd123a21ec"
+    },
+    {
+      "path": "shared-web/src/components/icons/home_icon.tsx",
+      "hash": "eb4a0a5e9993519ae37c57c3f98e2255"
+    },
+    {
+      "path": "shared-web/src/components/icons/info_icon.tsx",
+      "hash": "899aa4ba7c74696abf410909e1457b25"
+    },
+    {
+      "path": "shared-web/src/components/icons/link_icon.tsx",
+      "hash": "acd8d679a43ba6f5f01b5c286a688278"
+    },
+    {
+      "path": "shared-web/src/components/icons/location_pin_icon.tsx",
+      "hash": "3a75ea5fc1a4300ee2d7a1f5f228ae22"
+    },
+    {
+      "path": "shared-web/src/components/icons/lock_icon.tsx",
+      "hash": "e885c59c02fcaac37094cb94a17b2c6e"
+    },
+    {
+      "path": "shared-web/src/components/icons/logout_icon.tsx",
+      "hash": "189a0b94578e561a6d47a38c6f04623f"
+    },
+    {
+      "path": "shared-web/src/components/icons/minus_icon.tsx",
+      "hash": "cabe84f4033f7934eedf634ba5152e86"
+    },
+    {
+      "path": "shared-web/src/components/icons/plus_icon.tsx",
+      "hash": "61ec20bb5be745d3e493276257d93f92"
+    },
+    {
+      "path": "shared-web/src/components/icons/refresh_icon.tsx",
+      "hash": "15f0eaa22233944e2d8933df73798077"
+    },
+    {
+      "path": "shared-web/src/components/icons/square_icon.tsx",
+      "hash": "e07479d20a66dad24dcef8e5828dd319"
+    },
+    {
+      "path": "shared-web/src/components/icons/swap_icon.tsx",
+      "hash": "aca734ef59604382aa25d2b065a4a073"
+    },
+    {
+      "path": "shared-web/src/components/icons/trash_icon.tsx",
+      "hash": "922ff5a40d602887ea37918122219788"
+    },
+    {
+      "path": "shared-web/src/components/icons/triangle_down.tsx",
+      "hash": "ec22fe461634204a6733133889b05d47"
+    },
+    {
+      "path": "shared-web/src/example.test.tsx",
+      "hash": "566fd9788e15c0098ef1120a94c56d87"
+    },
+    {
+      "path": "shared-web/src/lib/data_store.tsx",
+      "hash": "fcc71fa6a9ba8bd0de31f54c4aff3cd2"
+    },
+    {
+      "path": "shared-web/src/lib/map_data_store.tsx",
+      "hash": "ae5ee226a80dd9b1b9c88aae2fdbb169"
+    },
+    {
+      "path": "shared-web/src/lib/notification.tsx",
+      "hash": "4b974dbed3de8694d0255ad6e78ef649"
+    },
+    {
+      "path": "shared-web/src/lib/react.tsx",
+      "hash": "0cb394f950cbe29fbf42962abc206087"
+    },
+    {
+      "path": "shared-web/src/lib/styled_utils.tsx",
+      "hash": "d68065c3f10fbd20429aeeb70481269a"
+    },
+    {
+      "path": "shared-web/src/lib/time_utils.tsx",
+      "hash": "6242ced6090fd88927e3645da992b788"
+    },
+    {
+      "path": "shared-web/src/lib/transitions.tsx",
+      "hash": "5d5efbaf29d0f2e056d60b28875812a7"
+    },
+    {
+      "path": "shared-web/src/lib/use_click_outside.tsx",
+      "hash": "a4b78d3aafb125fa5cecae1a7d01d316"
+    },
+    {
+      "path": "shared-web/src/lib/use_global_key_press.tsx",
+      "hash": "e6914493274d9335e5fb0c7282aee87d"
+    },
+    {
+      "path": "shared-web/src/lib/use_is_mounted.ts",
+      "hash": "4b28f259274c532c677bb3cd9f6814bb"
+    },
+    {
+      "path": "shared-web/src/lib/use_previous.tsx",
+      "hash": "0c5616536f2518b8a2f7ca5708b61b55"
+    },
+    {
+      "path": "shared-web/src/lib/use_query_string.tsx",
+      "hash": "0625bfba68143e5543b469e176c38029"
+    },
+    {
+      "path": "shared-web/src/theme/theme_base.tsx",
+      "hash": "98fff357db568319fb1cf2fa1244d602"
+    },
+    {
+      "path": "shared-web/src/theme/theme_context.tsx",
+      "hash": "7c0f1bd0acb8aac463d6941fc18f6d30"
+    },
+    {
+      "path": "shared-web/src/theme/theme_model.ts",
+      "hash": "4e56bc9487fcfd0cdc6ec01c76b52548"
+    },
+    {
+      "path": "shared-web/src/theme/theme_utils.tsx",
+      "hash": "0c48fe4e861759ac63c9e90b9bb90fff"
+    },
+    {
+      "path": "shared-web/tsconfig.json",
+      "hash": "1c001b8ae78aecdce291580ae472f17f"
+    },
+    {
+      "path": "shared-web/webpack.config.js",
+      "hash": "1ef943c6da92b4ba955e02f073c41aa5"
+    },
+    {
+      "path": "shared/package.json",
+      "hash": "51ed468cd1c67b12b1864bd2012206a2"
+    },
+    {
+      "path": "shared/src/api/api.ts",
+      "hash": "d4764a969c16d2a491fa61e3d196d704"
+    },
+    {
+      "path": "shared/src/api/core/api_call.ts",
+      "hash": "17d35e2d74fbc5ad105953089a11cf0b"
+    },
+    {
+      "path": "shared/src/api/core/api_errors.ts",
+      "hash": "c850d28f12d74762cfd6c23f69451d8b"
+    },
+    {
+      "path": "shared/src/api/core/api_parser.ts",
+      "hash": "e4a7e09028f78e90277eff2d9dfd1b19"
+    },
+    {
+      "path": "shared/src/api/core/api_router.ts",
+      "hash": "b54c4e04db7c481bc6985de964236bda"
+    },
+    {
+      "path": "shared/src/api/core/api_schema.ts",
+      "hash": "955c31bc6bbec3f176402c24fabada12"
+    },
+    {
+      "path": "shared/src/api/core/api_types.ts",
+      "hash": "17824b5932f51ff31a9ea5f0372fde6b"
+    },
+    {
+      "path": "shared/src/lib/array_utils.ts",
+      "hash": "6eaab2a2daa5975a89207cc7a1b3df79"
+    },
+    {
+      "path": "shared/src/lib/date_utils.ts",
+      "hash": "5c6c56edf89fee6a8983ace3ebbb2deb"
+    },
+    {
+      "path": "shared/src/lib/format_utils.ts",
+      "hash": "0a6142e648d09da5e401c0a4fc821852"
+    },
+    {
+      "path": "shared/src/lib/map_utils.ts",
+      "hash": "21853f329ceda4ebb076e61136e489a9"
+    },
+    {
+      "path": "shared/src/lib/math_utils.ts",
+      "hash": "37bac17405e76465a30f6024a895520f"
+    },
+    {
+      "path": "shared/src/lib/object_utils.ts",
+      "hash": "7678107e747ebc0174dce6ff4ce8b523"
+    },
+    {
+      "path": "shared/src/lib/random_utils.ts",
+      "hash": "018867e42f3ac09c62d06880f1dc336a"
+    },
+    {
+      "path": "shared/src/lib/string_utils.ts",
+      "hash": "cb02fbf9be96876efecd5c3f45362b18"
+    },
+    {
+      "path": "shared/src/lib/time_format.ts",
+      "hash": "f8a41fb9478292a3fa5a43c0140acabb"
+    },
+    {
+      "path": "shared/src/lib/tuple_utils.ts",
+      "hash": "aea44d044e726ab9b4d4a7c985a57eff"
+    },
+    {
+      "path": "shared/src/lib/type_utils.ts",
+      "hash": "6f9db10597d40d4dea275bca4ecba8b7"
+    },
+    {
+      "path": "shared/src/models.ts",
+      "hash": "e9c40948b12b856fd3ec040fd7e2894b"
+    },
+    {
+      "path": "shared/tsconfig.json",
+      "hash": "b450aebd9cb626169650b9ee8ee85262"
+    },
+    {
+      "path": "shared/webpack.config.js",
+      "hash": "1ef943c6da92b4ba955e02f073c41aa5"
+    },
+    {
+      "path": "terraform/.aws-credentials",
+      "hash": "b1fbaad9e2d9a68c8b534b4d85cfa387"
+    },
+    {
+      "path": "terraform/base.tf",
+      "hash": "5a2cb48b963a1d67a82f6b8f915e485d"
+    },
+    {
+      "path": "terraform/website_terraform.tf",
+      "hash": "cfc3815444221e584a539801ee07d302"
+    },
+    {
+      "path": "website/package.json",
+      "hash": "da257950cbf5980b958d8944f1e63e8f"
+    },
+    {
+      "path": "website/src/components/app.tsx",
+      "hash": "ad57faf7dd28382a61bed4557997463e"
+    },
+    {
+      "path": "website/src/components/home_page.tsx",
+      "hash": "0efedfb62a6f0e89d8397358702f781f"
+    },
+    {
+      "path": "website/src/components/login_page.tsx",
+      "hash": "4edc61014a916dc0273aabddcd720b3f"
+    },
+    {
+      "path": "website/src/components/nav_bar.tsx",
+      "hash": "62c5609187a5296e443fe6aea6e6abfb"
+    },
+    {
+      "path": "website/src/components/test_page.tsx",
+      "hash": "19f9038896929a2ddf1315aeefe64d95"
+    },
+    {
+      "path": "website/src/components/tile.tsx",
+      "hash": "a191e60f9ff28b58b239d7e7baa0eada"
+    },
+    {
+      "path": "website/src/example.test.tsx",
+      "hash": "566fd9788e15c0098ef1120a94c56d87"
+    },
+    {
+      "path": "website/src/favicon.json",
+      "hash": "35d86b90f3ea0483520bc9027333afd9"
+    },
+    {
+      "path": "website/src/favicon.svg",
+      "hash": "3125420e6dfbea292746bf0354369a46"
+    },
+    {
+      "path": "website/src/index.html",
+      "hash": "a43eb6b860a667a7bc0c9ce271493dd4"
+    },
+    {
+      "path": "website/src/index.tsx",
+      "hash": "173756c68c4758cfab351cfcea8609eb"
+    },
+    {
+      "path": "website/src/lib/api.tsx",
+      "hash": "d420e3799ece5364523bc6d5449f873f"
+    },
+    {
+      "path": "website/src/stores/user_store.tsx",
+      "hash": "261d7b4674915ced4f3afcc8dcb60659"
+    },
+    {
+      "path": "website/src/theme.tsx",
+      "hash": "9b5e9f3625c6c84875ccc6a1fbfefa18"
+    },
+    {
+      "path": "website/tsconfig.json",
+      "hash": "9a4f4b4d30445b924faae0d1835da335"
+    },
+    {
+      "path": "website/webpack.config.js",
+      "hash": "d2f6fec950afced239ccdebb5400054f"
+    }
+  ],
+  "fragments": [
+    {
+      "type": "shared"
+    },
+    {
+      "type": "shared-web"
+    },
+    {
+      "type": "static-website",
+      "websiteName": "website"
+    }
+  ],
+  "version": "1.9.56"
+}

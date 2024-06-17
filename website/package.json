@@ -1,0 +1,14 @@
+{
+  "name": "website",
+  "license": "UNLICENSED",
+  "type": "module",
+  "prettier": "@matthis/prettier-config",
+  "scripts": {
+    "test": "node --import tsx --test **/*.test.tsx"
+  },
+  "eslintConfig": {
+    "extends": ["@matthis/eslint-config-web"]
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

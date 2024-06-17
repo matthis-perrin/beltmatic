@@ -1,0 +1,22 @@
+{
+  "name": "shared-web",
+  "license": "UNLICENSED",
+  "type": "module",
+  "prettier": "@matthis/prettier-config",
+  "scripts": {
+    "test": "node --import tsx --test **/*.test.tsx"
+  },
+  "eslintConfig": {
+    "extends": ["@matthis/eslint-config-web"]
+  },
+  "devDependencies": {
+    "@types/react": "18.2.x",
+    "@types/react-dom": "18.2.x"
+  },
+  "dependencies": {
+    "react": "18.2.x",
+    "react-dom": "18.2.x",
+    "styled-components": "6.1.x",
+    "wouter": "3.0.0-rc.3"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "Onescale React Component Snippet": {
+    "scope": "typescriptreact",
+    "prefix": ["react"],
+    "description": "Create a simple React component",
+    "body": [
+      "import {FC} from 'react';",
+      "import {styled} from 'styled-components';",
+      "",
+      "interface ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}Props {}",
+      "",
+      "export const ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}: FC<${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}Props> = () => {",
+      "  return (",
+      "    <Wrapper>",
+      "      ${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}",
+      "    </Wrapper>",
+      "  );",
+      "};",
+      "",
+      "${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}.displayName = '${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}';",
+      "",
+      "const Wrapper = styled.div`",
+      "  display: flex;",
+      "`;",
+      ""
+    ]
+  }
+}
