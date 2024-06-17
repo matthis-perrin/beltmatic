@@ -24,3 +24,16 @@ export function* iter<T>(values: T[]): Generator<[T, T]> {
     }
   }
 }
+
+export function* iterForDepths(
+  depthPairs: [number, number][],
+  searchSpace: Record<number, number[]>
+): Generator<[number, number]> {
+  for (const [d1, d2] of depthPairs) {
+    for (const v1 of searchSpace[d1] ?? []) {
+      for (const v2 of searchSpace[d2] ?? []) {
+        yield [v1, v2];
+      }
+    }
+  }
+}

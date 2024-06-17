@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {iter} from '@src/lib/iter';
+
+import {sum} from '@shared/lib/array_utils';
+
+import {iterForDepths} from '@src/lib/iter';
 
 export enum Operator {
   Add = 1,
@@ -45,7 +48,8 @@ export const OPERATOR_METADATA: Record<
 const MAX_VALUE = 2 ** 31 - 1;
 const trim = (val: number): number => (val > MAX_VALUE ? -1 : val);
 
-type Combi = {depth: number; history?: [number, Operator, number]}[];
+type RawExp = [number, Operator, number];
+export type Combi = {depth: number; histories?: Record<string, RawExp>}[];
 
 export type Expression =
   | {
@@ -59,10 +63,16 @@ interface Options {
   target: number;
   values: number[];
   operators: Operator[];
-  onSolution: (sol: {target: number; exp: Expression}) => void;
+  onSolution: (sol: {target: number; combi: Combi}) => void;
   onComplete: () => void;
-  onProgress: (iterations: number, maxIterations?: number) => void;
+  onProgress: (progress: SearchProgress) => void;
   onCancel: () => void;
+}
+
+export interface SearchProgress {
+  currentDepth: number;
+  iterations: number;
+  maxIterations: number;
 }
 
 export function findBest(opts: Options): {cancel: () => void; start: () => void} {
@@ -73,18 +83,52 @@ export function findBest(opts: Options): {cancel: () => void; start: () => void}
   }
   const availableOperators = operators.map(op => OPERATOR_METADATA[op]);
 
-  let globalIterations = 0;
+  let iterations = 0;
+  let maxIterations = 0;
   let found = false;
-  function availableValues(): number[] {
-    const values = Object.entries(combi)
-      .sort(([v1, {depth: d1}], [v2, {depth: d2}]) =>
-        d1 !== d2 ? d1 - d2 : parseFloat(v1) - parseFloat(v2)
-      )
-      .map(e => parseFloat(e[0]));
-    return values;
+  let currentDepth = 1;
+  function availableValues(lowerThan: number): Record<number, number[]> {
+    const all: Record<number, number[]> = {};
+    for (const [str, {depth}] of Object.entries(combi)) {
+      const v = parseFloat(str);
+      if (v > lowerThan) {
+        continue;
+      }
+      const curr = all[depth];
+      if (curr === undefined) {
+        all[depth] = [v];
+      } else {
+        curr.push(v);
+      }
+    }
+    return all;
   }
-  let searchSpace = availableValues();
-  let iterator = iter(searchSpace);
+  function availableDepthPairs(): [number, number][] {
+    const pairs: [number, number][] = [];
+    for (let d1 = 0; d1 <= currentDepth; d1++) {
+      for (let d2 = 0; d2 <= currentDepth; d2++) {
+        if (d1 + d2 + 1 === currentDepth) {
+          pairs.push([d1, d2]);
+        }
+      }
+    }
+    return pairs;
+  }
+  function getIterator(): Generator<[number, number]> {
+    const depthPairs = availableDepthPairs();
+    const searchSpace = availableValues(target);
+    maxIterations =
+      operators.length *
+      sum(
+        depthPairs.map(
+          ([d1, d2]) => (searchSpace[d1]?.length ?? 0) * (searchSpace[d2]?.length ?? 0)
+        )
+      );
+    iterations = 0;
+    onProgress({currentDepth, iterations, maxIterations});
+    return iterForDepths(depthPairs, searchSpace);
+  }
+  let iterator = getIterator();
 
   let shouldStop = false;
   const cancel = (): void => {
@@ -106,41 +150,54 @@ export function findBest(opts: Options): {cancel: () => void; start: () => void}
           onComplete();
           return;
         }
-        searchSpace = availableValues();
-        iterator = iter(searchSpace);
+        currentDepth += 1;
+        iterator = getIterator();
         continue;
       }
       const [val1, val2] = nextVal.value;
       for (const op of availableOperators) {
-        globalIterations++;
+        iterations++;
         const newValue = op.fn(val1, val2);
         if (newValue <= 0) {
           continue;
         }
+        const sortedVal = (op.ordered ? [val1, val2] : [val1, val2].sort((a, b) => a - b)) as [
+          number,
+          number,
+        ];
+        const hKey = `${sortedVal[0]}${op.label}${sortedVal[1]}`;
+        const h = [sortedVal[0], op.op, sortedVal[1]] as RawExp;
         const newDepth = combi[val1]!.depth + combi[val2]!.depth + 1;
         const current = combi[newValue];
         if (current === undefined) {
           combi[newValue] = {
             depth: newDepth,
-            history: [val1, op.op, val2],
+            histories: {[hKey]: h},
           };
         }
 
         if (current !== undefined) {
+          // Skip
           if (newDepth > current.depth) {
             continue;
           }
-          current.depth = newDepth;
-          current.history = [val1, op.op, val2];
+          if (newDepth < current.depth) {
+            current.depth = newDepth;
+            current.histories = {[hKey]: h};
+          } else if (!current.histories) {
+            current.histories = {[hKey]: h};
+          } else if (!(hKey in current.histories)) {
+            current.histories[hKey] = h;
+          }
         }
 
-        if (newValue === target && (current === undefined || current.depth >= newDepth)) {
+        if (newValue === target) {
           found = true;
-          onSolution({target, exp: cloneExpression(generateExpression(combi, target))});
+          onSolution({target, combi});
         }
       }
       if (Date.now() - start >= LOOP_DURATION_MS) {
-        onProgress(globalIterations, found ? searchSpace.length ** 2 : undefined);
+        onProgress({currentDepth, iterations, maxIterations});
         setTimeout(loop, 0);
         return;
       }
@@ -148,23 +205,30 @@ export function findBest(opts: Options): {cancel: () => void; start: () => void}
   }
 
   const start = (): void => {
-    onProgress(0, undefined);
     setTimeout(loop, 0);
   };
 
   return {cancel, start};
 }
 
-function generateExpression(combi: Combi, val: number): Expression {
+export function generateExpressions(combi: Combi, val: number): Expression[] {
   const valInfo = combi[val];
-  if (valInfo!.history === undefined) {
-    return val;
+  if (valInfo?.histories === undefined) {
+    return [val];
   }
-  const [val1, op, val2] = valInfo!.history;
-  return {val1: generateExpression(combi, val1), op, val2: generateExpression(combi, val2)};
+  return Object.values(valInfo.histories).flatMap(h => {
+    const [hVal1, op, hVal2] = h;
+    const res: Expression[] = [];
+    for (const val1 of generateExpressions(combi, hVal1)) {
+      for (const val2 of generateExpressions(combi, hVal2)) {
+        res.push({val1, op, val2});
+      }
+    }
+    return res;
+  });
 }
 
-function cloneExpression(exp: Expression): Expression {
+export function cloneExpression(exp: Expression): Expression {
   if (typeof exp === 'number') {
     return exp;
   }
