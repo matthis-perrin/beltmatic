@@ -1,12 +1,14 @@
-import {FormEventHandler, useCallback, useMemo, useState} from 'react';
+import {FormEventHandler, useCallback, useState} from 'react';
 import {styled} from 'styled-components';
 
-import {min, sum} from '@shared/lib/array_utils';
+import {min, sum, zip} from '@shared/lib/array_utils';
+import {randomStringUnsafe} from '@shared/lib/random_utils';
 
 import {Button} from '@shared-web/components/core/button';
 import {Input} from '@shared-web/components/core/input';
+import {useLocalStorage} from '@shared-web/lib/use_local_storage';
 
-import {ExpressionView} from '@src/components/expression';
+import {History, HistoryItem} from '@src/components/history';
 import {Tile} from '@src/components/tile';
 import {
   Combi,
@@ -15,7 +17,6 @@ import {
   generateExpressions,
   Operator,
   OPERATOR_METADATA,
-  SearchProgress,
 } from '@src/lib/engine';
 
 function asString(num: number | undefined): string {
@@ -39,11 +40,57 @@ function countExpression(exp: Expression, count: ExpressionCount): void {
     countExpression(exp.val2, count);
   }
 }
+
+export function sortExpression(exp1: Expression, exp2: Expression): number {
+  if (typeof exp1 === 'number' || typeof exp2 === 'number') {
+    return typeof exp1 === 'number' ? -1 : 1;
+  }
+
+  // Minimize ops
+  const count1: ExpressionCount = {numbers: {}, ops: 0};
+  const count2: ExpressionCount = {numbers: {}, ops: 0};
+  countExpression(exp1, count1);
+  countExpression(exp2, count2);
+  if (count1.ops !== count2.ops) {
+    return count1.ops - count2.ops;
+  }
+
+  // Minimize max duplicated numbers
+  const max1 = Math.max(...Object.values(count1.numbers));
+  const max2 = Math.max(...Object.values(count2.numbers));
+  if (max1 !== max2) {
+    return max1 - max2;
+  }
+
+  // Minimize number of duplicated numbers
+  const maxCount1 = Object.values(count1.numbers).filter(c => c === max1).length;
+  const maxCount2 = Object.values(count2.numbers).filter(c => c === max2).length;
+  if (maxCount1 !== maxCount2) {
+    return maxCount1 - maxCount2;
+  }
+
+  // Minimize largest number
+  const nums1 = Object.keys(count1.numbers)
+    .map(c => parseFloat(c))
+    .sort((a, b) => b - a);
+  const nums2 = Object.keys(count2.numbers)
+    .map(c => parseFloat(c))
+    .sort((a, b) => b - a);
+  for (const [n1, n2] of zip(nums1, nums2)) {
+    if (n1 !== n2) {
+      return n1 - n2;
+    }
+  }
+
+  return 0;
+}
+
 function scoreExpression(exp: Expression): number {
   const count: ExpressionCount = {numbers: {}, ops: 0};
   countExpression(exp, count);
   return sum(Object.values(count.numbers).map(c => 100 ** c)) ** count.ops;
 }
+
 function expressionAsString(exp: Expression): string {
   if (typeof exp === 'number') {
     return String(exp);
@@ -55,11 +102,30 @@ function expressionAsString(exp: Expression): string {
   return `(${val1}${op.label}${val2})`;
 }
 
+function bestExpressions(
+  solution: {target: number; combi: Combi} | undefined
+): Expression[] | undefined {
+  if (solution === undefined) {
+    return undefined;
+  }
+  // Generation
+  const solutions = generateExpressions(solution.combi, solution.target);
+  // Dedup
+  const deduped = [...new Map(solutions.map(s => [expressionAsString(s), s] as const)).values()];
+  // Sorting
+  const withScore = deduped.map(s => ({exp: s, score: scoreExpression(s)}));
+  const bestScore = min(withScore, s => s.score);
+  // Filtering
+  return withScore
+    .filter(s => s.score === bestScore)
+    .map(s => s.exp)
+    .slice(0, 10);
+}
+
 export const HomePage: React.FC = () => {
   const [value, setValue] = useState<number>();
-  const [solution, setSolution] = useState<{target: number; combi: Combi}>();
-  const [progress, setProgress] = useState<SearchProgress>();
   const [cancelFn, setCancelFn] = useState<{fn: () => void}>();
+  const [history, setHistory] = useLocalStorage<HistoryItem[]>('history', []);
 
   const handleSubmit = useCallback<FormEventHandler>(
     evt => {
@@ -71,43 +137,55 @@ export const HomePage: React.FC = () => {
       if (value === undefined) {
         return;
       }
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      const historyId = randomStringUnsafe(8);
+      setHistory(h => [
+        ...h,
+        {
+          id: historyId,
+          target: value,
+          date: Date.now(),
+          progress: undefined,
+          exp: undefined,
+        },
+      ]);
       const ret = findBest({
         target: value,
         operators: [Operator.Add, Operator.Substract, Operator.Multiply, Operator.Exponent],
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+        values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
         onComplete: () => {
           setCancelFn(undefined);
-          setProgress(undefined);
+          setHistory(history =>
+            history.map(h =>
+              h.id === historyId ? {...h, date: Date.now(), progress: undefined} : h
+            )
+          );
         },
-        onSolution: setSolution,
+        onSolution: sol => {
+          setHistory(history =>
+            history.map(h =>
+              h.id === historyId ? {...h, date: Date.now(), exp: bestExpressions(sol)} : h
+            )
+          );
+        },
         onCancel: () => {
           setCancelFn(undefined);
-          setProgress(undefined);
+          setHistory(history =>
+            history.map(h => (h.id === historyId ? {...h, date: Date.now(), canceled: true} : h))
+          );
         },
-        onProgress: setProgress,
+        onProgress: progress => {
+          setHistory(history =>
+            history.map(h => (h.id === historyId ? {...h, date: Date.now(), progress} : h))
+          );
+        },
       });
       setCancelFn({fn: ret.cancel});
-      setSolution(undefined);
       ret.start();
     },
-    [cancelFn, value]
+    [cancelFn, setHistory, value]
   );
-
-  const bestSolutions = useMemo(() => {
-    if (solution === undefined) {
-      return undefined;
-    }
-    // Generation
-    const solutions = generateExpressions(solution.combi, solution.target);
-    // Dedup
-    const deduped = [...new Map(solutions.map(s => [expressionAsString(s), s] as const)).values()];
-    // Scoring
-    const withScore = deduped.map(s => ({exp: s, score: scoreExpression(s)}));
-    const bestScore = min(withScore, s => s.score);
-
-    return withScore.filter(s => s.score === bestScore);
-  }, [solution]);
 
   return (
     <Wrapper>
@@ -132,45 +210,25 @@ export const HomePage: React.FC = () => {
               {`SEARCH`}
             </Button>
           )}
-
-          {progress !== undefined ? (
-            <div>{`Searching... (depth ${
-              progress.currentDepth
-            }, it. ${progress.iterations.toLocaleString()}, ${(
-              Math.floor((100 * 100 * progress.iterations) / progress.maxIterations) / 100
-            ).toLocaleString(undefined, {minimumFractionDigits: 2})}%`}</div>
-          ) : (
-            <></>
-          )}
-
-          {bestSolutions !== undefined && solution ? (
-            bestSolutions
-              .slice(0, 10)
-              .map(s => (
-                <ExpressionView
-                  key={JSON.stringify(s)}
-                  target={solution.target}
-                  expression={s.exp}
-                />
-              ))
-          ) : (
-            <></>
-          )}
-          {bestSolutions && bestSolutions.length > 10 ? (
-            <HiddenMessage>{`Showing 10 out of ${bestSolutions.length.toLocaleString()}`}</HiddenMessage>
-          ) : (
-            <></>
-          )}
         </Form>
       </Tile>
+      {history
+        .sort((h1, h2) => h2.date - h1.date)
+        .map((h, i) => (
+          <Tile key={h.id}>
+            <History history={h} startExpanded={i === 0} />
+          </Tile>
+        ))}
     </Wrapper>
   );
 };
 HomePage.displayName = 'HomePage';
 
 const Wrapper = styled.div`
-  padding: 32px;
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 32px auto;
 `;
 
 const Form = styled.form`
@@ -179,10 +237,4 @@ const Form = styled.form`
   align-items: center;
   justify-content: center;
   gap: 16px;
-`;
-
-const HiddenMessage = styled.div`
-  font-style: italic;
-  color: #888;
-  text-align: center;
 `;
