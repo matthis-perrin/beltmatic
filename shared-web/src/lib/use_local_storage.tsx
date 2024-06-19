@@ -33,16 +33,23 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<S
   }, [key, initialValue]);
 
   // Create the setter
-  const setItem = (action: T | ((curr: T) => T)): void => {
-    if (typeof action === 'function') {
-      return setItem((action as (curr: T) => T)(valueRef.current ?? initialValue));
-    }
-    const newRawValue = JSON.stringify(action);
-    rawValueRef.current = newRawValue;
-    valueRef.current = action;
-    setValue(action);
-    window.localStorage.setItem(key, newRawValue);
-  };
+  const setItem = useCallback(
+    (action: T | ((curr: T) => T)): void => {
+      if (typeof action === 'function') {
+        return setItem((action as (curr: T) => T)(valueRef.current ?? initialValue));
+      }
+      const oldRawValue = rawValueRef.current;
+      const newRawValue = JSON.stringify(action);
+      rawValueRef.current = newRawValue;
+      valueRef.current = action;
+      setValue(action);
+      window.localStorage.setItem(key, newRawValue);
+      window.dispatchEvent(
+        new StorageEvent('storage', {key, oldValue: oldRawValue, newValue: newRawValue})
+      );
+    },
+    [initialValue, key]
+  );
 
   // Handle storage changes
   const handleStorage = useCallback(
@@ -56,6 +63,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<S
     },
     [initialValue, key]
   );
+
   useEffect(() => {
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
