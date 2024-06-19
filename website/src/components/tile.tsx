@@ -2,7 +2,7 @@ import {styled} from 'styled-components';
 
 export const Tile = styled.div`
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   padding: 24px;
   display: flex;
   flex-direction: column;

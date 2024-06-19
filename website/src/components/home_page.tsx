@@ -3,6 +3,7 @@ import {styled} from 'styled-components';
 
 import {min, sum, zip} from '@shared/lib/array_utils';
 import {randomStringUnsafe} from '@shared/lib/random_utils';
+import {removeUndefined} from '@shared/lib/type_utils';
 
 import {Button} from '@shared-web/components/core/button';
 import {Input} from '@shared-web/components/core/input';
@@ -172,7 +173,15 @@ export const HomePage: React.FC = () => {
         onCancel: () => {
           setCancelFn(undefined);
           setHistory(history =>
-            history.map(h => (h.id === historyId ? {...h, date: Date.now(), canceled: true} : h))
+            removeUndefined(
+              history.map(h =>
+                h.id === historyId
+                  ? h.exp
+                    ? {...h, date: Date.now(), canceled: true}
+                    : undefined
+                  : h
+              )
+            )
           );
         },
         onProgress: progress => {
@@ -197,7 +206,7 @@ export const HomePage: React.FC = () => {
             asString={asString}
             fromString={fromString}
             autoFocus
-            width={300}
+            width={'100%'}
           />
 
           {cancelFn ? (
@@ -214,10 +223,8 @@ export const HomePage: React.FC = () => {
       </Tile>
       {history
         .sort((h1, h2) => h2.date - h1.date)
-        .map((h, i) => (
-          <Tile key={h.id}>
-            <History history={h} startExpanded={i === 0} />
-          </Tile>
+        .map(h => (
+          <History key={h.id} historyId={h.id} />
         ))}
     </Wrapper>
   );
@@ -227,8 +234,10 @@ HomePage.displayName = 'HomePage';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
   gap: 16px;
-  margin: 32px auto;
+  padding: 16px;
 `;
 
 const Form = styled.form`
