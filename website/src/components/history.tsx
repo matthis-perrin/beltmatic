@@ -28,7 +28,7 @@ export const History: FC<HistoryProps> = ({historyId}) => {
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('history', []);
   const historyItem = useMemo(() => history.find(h => h.id === historyId), [history, historyId]);
   const [collapsed, setCollapsed] = useState(
-    () => history.sort((h1, h2) => h2.date - h1.date)[0]?.id === historyId
+    () => history.sort((h1, h2) => h2.date - h1.date)[0]?.id !== historyId
   );
 
   const handleClick = useCallback(() => {
