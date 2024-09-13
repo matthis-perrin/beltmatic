@@ -58,9 +58,15 @@ interface TextfieldTheme {
 
 export interface FrontendTheme {
   main: {
+    dark: boolean;
     backgroundColor: string;
-    accentColor: string;
+    highlight1: string;
+    highlight2: string;
+    highlight3: string;
+    highlight4: string;
+    highlight5: string;
     textColor: string;
+    accentColor: string;
     accentTextColor: string;
     fontFamily: string;
     fontSize: string | number;

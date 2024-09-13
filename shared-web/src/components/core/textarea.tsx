@@ -34,7 +34,8 @@ export interface TextareaProps<T> {
   focusOnMount?: boolean;
   width?: number | string;
   height?: number | string;
-  resize?: TextareaResize; // default is 'vertical'
+  resize?: TextareaResize; // default to 'vertical'
+  rowLabel?: boolean;
 }
 // eslint-disable-next-line react/function-component-definition
 function TextareaInternal<T>(
@@ -53,6 +54,7 @@ function TextareaInternal<T>(
     width,
     height,
     resize = 'vertical',
+    rowLabel,
     ...textareaProps
   } = props;
   const internalRef = createRef<HTMLTextAreaElement>();
@@ -122,7 +124,7 @@ function TextareaInternal<T>(
       : /#[\dA-Fa-f]{3}/u.test(labelBaseColor)
         ? `${labelBaseColor}${labelBaseColor.slice(1, 4)}99` // eslint-disable-line @typescript-eslint/no-magic-numbers
         : labelBaseColor;
-    return (
+    const el = (
       <StyledLabel
         value={label}
         $paddingLeft={textareaTheme.$paddingLeft}
@@ -133,6 +135,8 @@ function TextareaInternal<T>(
         {textarea}
       </StyledLabel>
     );
+    // Wrap in a <div> (flex column) so that the label is on top of the input (unless `rowLabel` is enabled)
+    return rowLabel ? el : <ColumnLabel>{el}</ColumnLabel>;
   }
 
   return textarea;
@@ -221,4 +225,9 @@ const StyledLabel = styled(Label)<{
   ${p => optionalPx('padding-left', p.$paddingLeft)}
     ${p => optionalRaw(p.$fontSize, v => `font-size: calc(${cssPx(v)} * 0.8);`)}
       margin-bottom: ${p => cssPx(p.$marginBottom)};
+`;
+
+const ColumnLabel = styled.div`
+  display: flex;
+  flex-direction: column;
 `;

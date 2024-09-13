@@ -41,6 +41,7 @@ export interface InputProps<T> {
   focusOnMount?: boolean;
   noAutoFormat?: boolean;
   forceFormat?: number;
+  rowLabel?: boolean;
 }
 
 export type FullInputProps<T> = InputProps<T> &
@@ -63,6 +64,7 @@ function InputInternal<T>(props: FullInputProps<T>, ref: Ref<HTMLInputElement>):
     onBlur,
     noAutoFormat = asString !== undefined,
     forceFormat,
+    rowLabel,
     ...inputProps
   } = props;
   const internalRef = createRef<HTMLInputElement>();
@@ -146,7 +148,7 @@ function InputInternal<T>(props: FullInputProps<T>, ref: Ref<HTMLInputElement>):
       : /#[\dA-Fa-f]{3}/u.test(labelBaseColor)
         ? `${labelBaseColor}${labelBaseColor.slice(1, 4)}99` // eslint-disable-line @typescript-eslint/no-magic-numbers
         : labelBaseColor;
-    return (
+    const el = (
       <StyledLabel
         value={label}
         $paddingLeft={noLabelOffset ? 0 : inputTheme.$paddingLeft}
@@ -158,6 +160,8 @@ function InputInternal<T>(props: FullInputProps<T>, ref: Ref<HTMLInputElement>):
         {input}
       </StyledLabel>
     );
+    // Wrap in a <div> (flex column) so that the label is on top of the input (unless `rowLabel` is enabled)
+    return rowLabel ? el : <ColumnLabel>{el}</ColumnLabel>;
   }
 
   return input;
@@ -267,4 +271,9 @@ const StyledLabel = styled(Label)<{
   ${p => optionalRaw(p.$fontSize, v => `font-size: calc(${cssPx(v)} * 0.8);`)}
   ${p => (p.$labelPosition === 'center' ? 'text-align: center;' : false)}
   margin-bottom: ${p => cssPx(p.$marginBottom)};
+`;
+
+const ColumnLabel = styled.div`
+  display: flex;
+  flex-direction: column;
 `;

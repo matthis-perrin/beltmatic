@@ -4,7 +4,7 @@ import {AddPrefix, addPrefix} from '@shared/lib/type_utils';
 
 import {Label, LabelProps} from '@shared-web/components/core/label';
 import {CustomWithout} from '@shared-web/lib/react';
-import {optional, optionalPx} from '@shared-web/lib/styled_utils';
+import {optional, optionalPx, optionalRaw} from '@shared-web/lib/styled_utils';
 import {useTheme} from '@shared-web/theme/theme_context';
 import {FrontendTheme} from '@shared-web/theme/theme_model';
 
@@ -60,6 +60,10 @@ const EnabledLabel = styled(BaseLabel)<AddPrefix<FrontendTheme['radio'], '$'>>`
   cursor: pointer;
   &:hover {
     background-color: ${p => p.$labelHoverColor};
+  }
+  border: solid 1px transparent;
+  &:has(:focus-visible) {
+    ${p => optionalRaw(p.$radioColor, v => `border: solid 1px ${v};`)}
   }
 `;
 const DisabledLabel = styled(BaseLabel)`

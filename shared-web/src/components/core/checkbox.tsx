@@ -65,6 +65,14 @@ const EnabledLabel = styled(BaseLabel)<AddPrefix<FrontendTheme['checkbox'], '$'>
   &:hover {
     ${p => optional('background-color', p.$labelHoverColor)}
   }
+  border: solid 1px transparent;
+  &:has(:focus-visible) {
+    ${p =>
+      optionalRaw(
+        p.$backgroundColorChecked ?? p.$borderColorChecked,
+        v => `border: solid 1px ${v};`
+      )}
+  }
 `;
 const DisabledLabel = styled(BaseLabel)`
   opacity: 0.4;
@@ -95,7 +103,5 @@ const Input = styled.input<AddPrefix<FrontendTheme['checkbox'], '$'>>`
   &:checked:before {
     background-color: ${p => p.$backgroundColorChecked ?? '#ffffff'};
     ${p => optionalRaw(p.$borderColorChecked, v => `border-color: ${v};`)}
-  }
-  &:hover {
   }
 `;

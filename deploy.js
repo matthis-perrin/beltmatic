@@ -6,19 +6,6 @@ import {join} from 'path';
 
 const terraformPath = join(process.cwd(), 'terraform');
 
-function checkTerraformCredentials() {
-  const credentialsPath = join(terraformPath, '.aws-credentials');
-  try {
-    accessSync(credentialsPath);
-  } catch {
-    throw new Error(
-      `Missing AWS credential files at "${credentialsPath}"
-To use your current credentials with this project run:
-cp ~/.aws/credentials ${credentialsPath}`
-    );
-  }
-}
-
 function terraformOutputs() {
   const res = JSON.parse(execSync(`terraform output -json`, {cwd: terraformPath}).toString());
   return Object.fromEntries(Object.entries(res).map(([key, obj]) => [key, obj.value]));
@@ -39,7 +26,6 @@ async function run() {
   console.log('--------------------------------------------------------------------------------');
 
   // Get terraform outputs
-  checkTerraformCredentials();
   let outputs = terraformOutputs();
   if (Object.keys(outputs).length === 0) {
     throw new Error('You must run "terraform apply" to deploy the infrastructure first');
@@ -58,16 +44,12 @@ async function run() {
     const zipPath = join(tmp, randomUUID()) + '.zip';
     execSync(`pushd ${lambdaName}/dist; zip -q -r ${zipPath} *; popd`);
     execSync(
-      `aws s3api put-object --bucket ${code_bucket} --key ${lambdaName}/dist.zip --tagging "Project=beltmatic" --body ${zipPath}`,
-      {
-        env: {AWS_SHARED_CREDENTIALS_FILE: 'terraform/.aws-credentials'},
-      }
+      `aws s3api put-object --bucket ${code_bucket} --key ${lambdaName}/dist.zip --tagging "Project=beltmatic" --body ${zipPath}`
     );
     execSync(
       `aws lambda update-function-code --function-name ${
         outputs[`${lambdaName}_function_name`]
-      } --s3-bucket ${code_bucket} --s3-key ${lambdaName}/dist.zip --region ${region} --publish --no-cli-pager`,
-      {env: {AWS_SHARED_CREDENTIALS_FILE: 'terraform/.aws-credentials'}}
+      } --s3-bucket ${code_bucket} --s3-key ${lambdaName}/dist.zip --region ${region} --publish --no-cli-pager`
     );
   }
 
@@ -78,9 +60,7 @@ async function run() {
   for (const websiteName of websiteProjects) {
     const websiteUrl = outputs[`${websiteName}_cloudfront_domain_name`];
     console.log(`Deploying website ${websiteName}`, websiteUrl);
-    execSync(`aws s3 sync ${websiteName}/dist s3://${code_bucket}/${websiteName}`, {
-      env: {AWS_SHARED_CREDENTIALS_FILE: 'terraform/.aws-credentials'},
-    });
+    execSync(`aws s3 sync ${websiteName}/dist s3://${code_bucket}/${websiteName}`);
   }
 
   console.log('--------------------------------------------------------------------------------');

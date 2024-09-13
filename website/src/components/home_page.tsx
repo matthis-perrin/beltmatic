@@ -210,7 +210,6 @@ export const HomePage: React.FC = () => {
           />
 
           {cancelFn ? (
-            // eslint-disable-next-line react/jsx-handler-names
             <Button expand onClick={cancelFn.fn}>
               Cancel
             </Button>

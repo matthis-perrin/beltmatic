@@ -19,7 +19,7 @@ import {localeDate, localeDateString} from '@shared/lib/time_format';
 import {Calendar} from '@shared-web/components/core/calendar';
 import {Input} from '@shared-web/components/core/input';
 import {TimePicker} from '@shared-web/components/core/time_picker';
-import {EmptyFragment, NULL_REF} from '@shared-web/lib/react';
+import {EmptyFragment} from '@shared-web/lib/react';
 import {useClickOutside} from '@shared-web/lib/use_click_outside';
 import {useTheme} from '@shared-web/theme/theme_context';
 import {FrontendTheme} from '@shared-web/theme/theme_model';
@@ -32,6 +32,8 @@ interface DateTimeInputProps {
   label?: string | JSX.Element;
   overrides?: Partial<FrontendTheme['input']>;
   autoFocus?: boolean;
+  noTimePicker?: boolean;
+  utc?: boolean;
 }
 
 function stringToTs(str: string): number | undefined {
@@ -45,13 +47,13 @@ function tsToString(ts: number | undefined): string {
 const SPACE_BETWEEN_INPUT_AND_CALENDAR = 8;
 
 export const DateTimeInput: FC<DateTimeInputProps> = props => {
-  const {ts, minTs, maxTs, syncState, label, overrides, autoFocus} = props;
+  const {ts, minTs, maxTs, syncState, label, overrides, autoFocus, noTimePicker, utc} = props;
   const {
     main: {accentColor},
   } = useTheme();
 
-  const inputRef = useRef<HTMLInputElement>(NULL_REF);
-  const wrapperRef = useRef<HTMLDivElement>(NULL_REF);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [inputText, setInputText] = useState(ts !== undefined ? tsToString(ts) : '');
   const [calendarShown, setCalendarShown] = useState(false);
@@ -59,6 +61,25 @@ export const DateTimeInput: FC<DateTimeInputProps> = props => {
   const [selectedDay, setSelectedDay] = useState<Date | undefined>();
   const [calendarOffset, setCalendarOffset] = useState(0);
   const isHoveringCalendar = useRef(false);
+
+  const convertTs = useCallback(
+    (ts: number) => {
+      if (utc) {
+        const d = new Date(ts);
+        return Date.UTC(
+          d.getFullYear(),
+          d.getMonth(),
+          d.getDate(),
+          d.getHours(),
+          d.getMinutes(),
+          d.getSeconds(),
+          d.getMilliseconds()
+        );
+      }
+      return ts;
+    },
+    [utc]
+  );
 
   useEffect(() => {
     if (ts !== undefined) {
@@ -126,13 +147,20 @@ export const DateTimeInput: FC<DateTimeInputProps> = props => {
     setCalendarDate(currentDate => new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
   }, []);
 
-  const handleDayClick = useCallback<MouseEventHandler>(evt => {
-    const date = new Date(parseFloat(evt.currentTarget.getAttribute('data-ts') ?? ''));
-    if (isNaN(date.getTime())) {
-      return;
-    }
-    setTimeout(() => setSelectedDay(date));
-  }, []);
+  const handleDayClick = useCallback<MouseEventHandler>(
+    evt => {
+      const date = new Date(parseFloat(evt.currentTarget.getAttribute('data-ts') ?? ''));
+      if (isNaN(date.getTime())) {
+        return;
+      }
+      if (noTimePicker) {
+        syncState?.(convertTs(date.getTime()));
+      } else {
+        setTimeout(() => setSelectedDay(date));
+      }
+    },
+    [convertTs, noTimePicker, syncState]
+  );
 
   const handleTimeClick = useCallback(
     (hour: number, minute: number) => {
@@ -145,9 +173,9 @@ export const DateTimeInput: FC<DateTimeInputProps> = props => {
       const ts = date.getTime();
       setInputText(tsToString(ts));
       setCalendarShown(false);
-      syncState?.(ts);
+      syncState?.(convertTs(ts));
     },
-    [selectedDay, syncState]
+    [convertTs, selectedDay, syncState]
   );
 
   const handleFocus = useCallback(() => setCalendarShown(true), []);

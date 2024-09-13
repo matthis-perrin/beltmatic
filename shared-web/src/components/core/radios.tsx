@@ -77,7 +77,7 @@ export function Radios<T>(
   );
 
   if (label !== undefined) {
-    return (
+    const el = (
       <StyledLabel
         value={label}
         $paddingLeft={radioTheme.$labelPaddingLeft ?? 0}
@@ -88,6 +88,7 @@ export function Radios<T>(
         {radios}
       </StyledLabel>
     );
+    return column ? <div>{el}</div> : el;
   }
 
   return radios;

@@ -120,7 +120,7 @@ export function createButton<Type extends keyof ButtonTypes>(opts: {
       if (onClickAsync !== undefined) {
         onClickAsync(evt)
           .then(() => setIsAsyncClicked(false))
-          .catch(err => {
+          .catch((err: unknown) => {
             notifyError(err);
             setIsAsyncClicked(false);
           });

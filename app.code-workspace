@@ -1,30 +1,29 @@
 {
   "folders": [
     {
-      "path": "shared"
+      "path": "website",
     },
     {
-      "path": "shared-web"
+      "path": "shared",
     },
     {
-      "path": "website"
+      "path": "shared-web",
     },
     {
-      "path": "terraform"
+      "path": "terraform",
     },
     {
       "path": ".",
-      "name": "root"
-    }
+      "name": "root",
+    },
   ],
   "settings": {
     "window.title": "beltmatic${separator}${activeEditorShort}",
     "files.exclude": {
-      "shared": true,
-      "shared-node": true,
-      "shared-web": true,
       "website": true,
-      "terraform": true
+      "shared": true,
+      "shared-web": true,
+      "terraform": true,
     },
     "editor.acceptSuggestionOnCommitCharacter": false,
     "editor.suggestSelection": "first",
@@ -35,29 +34,26 @@
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "eslint.lintTask.enable": true,
     "eslint.useESLintClass": true,
-    "eslint.options": {
-      "reportUnusedDisableDirectives": "warn"
-    },
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll": "never",
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "explicit",
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.linkedEditing": true,
     "emmet.showExpandedAbbreviation": "never",
     "files.associations": {
-      "*.tf": "terraform"
+      "*.tf": "terraform",
     },
     "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[typescriptreact]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "[terraform]": {
-      "editor.defaultFormatter": "hashicorp.terraform"
-    }
+      "editor.defaultFormatter": "hashicorp.terraform",
+    },
   },
   "extensions": {
     "recommendations": [
@@ -67,7 +63,7 @@
       "styled-components.vscode-styled-components",
       "naumovs.color-highlight",
       "eamodio.gitlens",
-      "hashicorp.terraform"
-    ]
-  }
+      "hashicorp.terraform",
+    ],
+  },
 }

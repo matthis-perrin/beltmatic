@@ -13,7 +13,7 @@ import {
 } from 'react';
 
 export type Custom<Props, Element extends ElementType, Omitted extends string = ''> = FC<
-  Props & Omit<ComponentPropsWithoutRef<Element>, 'style' | Omitted>
+  Props & Omit<ComponentPropsWithoutRef<Element>, Omitted>
 >;
 export type CustomWithStyle<Props, Element extends ElementType> = FC<
   Props & ComponentPropsWithoutRef<Element>
@@ -22,12 +22,11 @@ export type CustomWithout<
   Props,
   Element extends ElementType,
   Excluded extends keyof ComponentPropsWithoutRef<Element>,
-> = FC<Props & Omit<ComponentPropsWithoutRef<Element>, 'style' | Excluded>>;
+> = FC<Props & Omit<ComponentPropsWithoutRef<Element>, Excluded>>;
 
 export type InputHandler = ChangeEventHandler<HTMLInputElement>;
 export type ButtonHandler = MouseEventHandler<HTMLButtonElement>;
 
-export const NULL_REF = null;
 export const EmptyFragment = <></>;
 
 export type AsyncMouseHandler<T = Element> = (event: MouseEvent<T>) => Promise<void>;

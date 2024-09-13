@@ -1,6 +1,7 @@
 {
   "extends": "@matthis/tsconfig-web/tsconfig",
   "compilerOptions": {
+    "rootDir": "..",
     "baseUrl": ".",
     "paths": {
       "*": [

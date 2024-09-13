@@ -1,7 +1,69 @@
 output "website_cloudfront_domain_name" {
-  value       = aws_cloudfront_distribution.website.domain_name
+  value       = "beltmatic.matthis.link"
   description = "Domain (from cloudfront) where the \"website\" is available."
 }
+
+# Domain
+
+data "aws_route53_zone" "website" {
+  name = "matthis.link"
+}
+
+resource "aws_route53_record" "website_a" {
+  zone_id = data.aws_route53_zone.website.zone_id
+  name    = "beltmatic.matthis.link"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.website.domain_name
+    zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "website_aaaa" {
+  zone_id = data.aws_route53_zone.website.zone_id
+  name    = "beltmatic.matthis.link"
+  type    = "AAAA"
+
+  alias {
+    name                   = aws_cloudfront_distribution.website.domain_name
+    zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_acm_certificate" "website" {
+  domain_name               = "*.beltmatic.matthis.link"
+  subject_alternative_names = ["beltmatic.matthis.link"]
+  validation_method         = "DNS"
+  provider                  = aws.us-east-1
+}
+
+resource "aws_route53_record" "website_certificate_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.website.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+  provider        = aws.us-east-1
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.website.zone_id
+}
+
+resource "aws_acm_certificate_validation" "website" {
+  provider                = aws.us-east-1
+  certificate_arn         = aws_acm_certificate.website.arn
+  validation_record_fqdns = [for record in aws_route53_record.website_certificate_validation : record.fqdn]
+}
+
+# Cloudfront Distribution
 
 resource "aws_cloudfront_origin_access_identity" "website" {}
   
@@ -20,6 +82,7 @@ resource "aws_cloudfront_distribution" "website" {
   wait_for_deployment = false
   is_ipv6_enabled     = true
   price_class         = "PriceClass_100"
+  aliases             = ["beltmatic.matthis.link"]
   
   default_root_object = "/index.html"
   custom_error_response {
@@ -60,6 +123,8 @@ resource "aws_cloudfront_distribution" "website" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.website.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 }

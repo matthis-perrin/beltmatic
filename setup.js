@@ -40,7 +40,7 @@ function requirementDetection() {
 //
 
 async function installNodeModulesAtPath(path) {
-  return new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     exec(
       `yarn install --check-files --audit --non-interactive --ignore-engines`,
       {cwd: path},

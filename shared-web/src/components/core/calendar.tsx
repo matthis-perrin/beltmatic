@@ -1,20 +1,24 @@
-import {FC, JSX} from 'react';
+import {FC, JSX, MouseEventHandler, useCallback} from 'react';
 import {styled} from 'styled-components';
 
-import {DAYS_IN_WEEK} from '@shared/lib/date_utils';
+import {DAYS_IN_WEEK, startOfLocalDay} from '@shared/lib/date_utils';
 
 import {SvgIcon} from '@shared-web/components/core/svg_icon';
 import {chevronLeftIcon} from '@shared-web/components/icons/chevron_left_icon';
 import {chevronRightIcon} from '@shared-web/components/icons/chevron_right_icon';
 import {EmptyFragment} from '@shared-web/lib/react';
-import {optional, optionalRaw} from '@shared-web/lib/styled_utils';
+import {optional} from '@shared-web/lib/styled_utils';
+import {useTheme} from '@shared-web/theme/theme_context';
+import {FrontendTheme} from '@shared-web/theme/theme_model';
 
 interface CalendarProps {
   month: number;
   year: number;
-  renderCell: (date: Date) => JSX.Element;
-  onPreviousClick: () => void;
-  onNextClick: () => void;
+  isDisabled?: (date: Date) => boolean;
+  renderCell?: (date: Date) => JSX.Element;
+  onPreviousClick?: () => void;
+  onNextClick?: () => void;
+  onDayClick?: (date: Date) => void;
 }
 
 const MONDAY = 1;
@@ -50,10 +54,53 @@ export function calendarWeeks(opts: {month: number; year: number}): Date[][] {
 }
 
 export const Calendar: FC<CalendarProps> = props => {
-  const {renderCell, year, month, onPreviousClick, onNextClick} = props;
+  const {
+    renderCell: renderCellProp,
+    year,
+    month,
+    onPreviousClick,
+    onNextClick,
+    onDayClick,
+    isDisabled,
+  } = props;
+  const {main} = useTheme();
 
   const handlePreviousClick = onPreviousClick;
   const handleNextClick = onNextClick;
+
+  const handleDayClick = useCallback<MouseEventHandler>(
+    evt => {
+      const date = new Date(parseFloat(evt.currentTarget.getAttribute('data-ts') ?? ''));
+      if (isNaN(date.getTime())) {
+        return;
+      }
+      onDayClick?.(date);
+    },
+    [onDayClick]
+  );
+
+  const renderCell = useCallback(
+    (date: Date): JSX.Element => {
+      if (renderCellProp) {
+        return renderCellProp(date);
+      }
+      const today = startOfLocalDay();
+      const day = startOfLocalDay(date);
+      const isToday = today.getTime() === day.getTime();
+      const disabled = isDisabled ? isDisabled(date) : false;
+
+      return (
+        <CalendarCell $theme={main} $disabled={disabled} $highlighted={false}>
+          <CalendarCellDay>
+            <CalendarCellDayNumber $today={isToday} $theme={main}>
+              {date.getDate()}
+            </CalendarCellDayNumber>
+          </CalendarCellDay>
+        </CalendarCell>
+      );
+    },
+    [isDisabled, main, renderCellProp]
+  );
 
   const weeks = calendarWeeks({month, year});
   const [firstWeek] = weeks;
@@ -63,18 +110,18 @@ export const Calendar: FC<CalendarProps> = props => {
 
   return (
     <CalendarTable>
-      <CalendarHeader $textColor="#00000070">
+      <CalendarHeader $theme={main}>
         <tr>
           <td colSpan={firstWeek.length}>
             <MonthYear>
-              <SvgWrapper onClick={handlePreviousClick}>
-                <SvgIcon icon={chevronLeftIcon} color="#00000070" size={13} />
+              <SvgWrapper $theme={main} onClick={handlePreviousClick}>
+                <SvgIcon icon={chevronLeftIcon} color={main.textColor} size={13} />
               </SvgWrapper>
               <CalendarHeaderValue>
                 {new Date(year, month).toLocaleString(undefined, {month: 'long', year: 'numeric'})}
               </CalendarHeaderValue>
-              <SvgWrapper onClick={handleNextClick}>
-                <SvgIcon icon={chevronRightIcon} color="#00000070" size={13} />
+              <SvgWrapper $theme={main} onClick={handleNextClick}>
+                <SvgIcon icon={chevronRightIcon} color={main.textColor} size={13} />
               </SvgWrapper>
             </MonthYear>
           </td>
@@ -93,7 +140,13 @@ export const Calendar: FC<CalendarProps> = props => {
         {weeks.map(week => (
           <tr key={`week-${week[0]?.getTime()}`}>
             {week.map(date => (
-              <CalendarCell key={date.getTime()}>{renderCell(date)}</CalendarCell>
+              <CalendarCellWrapper
+                key={date.getTime()}
+                data-ts={date.getTime()}
+                onClick={handleDayClick}
+              >
+                {renderCell(date)}
+              </CalendarCellWrapper>
             ))}
           </tr>
         ))}
@@ -108,14 +161,9 @@ const CalendarTable = styled.table`
   table-layout: fixed;
 `;
 
-const CalendarHeader = styled.thead<{
-  $backgroundColor?: string;
-  $textColor?: string;
-  $borderColor?: string;
-}>`
-  ${p => optional('background-color', p.$backgroundColor)}
-  ${p => optional('color', p.$textColor)}
-  ${p => optionalRaw(p.$borderColor, v => `border: solid 2px ${v};`)}
+const CalendarHeader = styled.thead<{$theme: FrontendTheme['main']}>`
+  ${p => optional('background-color', p.$theme.backgroundColor)}
+  ${p => optional('color', p.$theme.textColor)}
   user-select: none;
 `;
 
@@ -129,7 +177,7 @@ const MonthYear = styled.div`
   }
 `;
 
-const SvgWrapper = styled.div`
+const SvgWrapper = styled.div<{$theme: FrontendTheme['main']}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +186,7 @@ const SvgWrapper = styled.div`
   border-radius: 36px;
   cursor: pointer;
   &:hover {
-    background-color: #00000008;
+    background-color: ${p => p.$theme.highlight1};
   }
 `;
 
@@ -148,9 +196,51 @@ const CalendarHeaderValue = styled.div`
   padding: 6px 0;
 `;
 
-const CalendarCell = styled.td<{$borderColor?: string}>`
+const CalendarCellWrapper = styled.td`
   width: ${100 / DAYS_IN_WEEK}%;
-  padding: 0;
-  vertical-align: top;
-  ${p => optionalRaw(p.$borderColor, v => `border: solid 2px ${v};`)}
+`;
+
+const CalendarCell = styled.div<{
+  $disabled: boolean;
+  $highlighted: boolean;
+  $theme: FrontendTheme['main'];
+}>`
+  display: flex;
+  flex-direction: column;
+  width: 48px;
+  height: 52px;
+  border-radius: 6px;
+  margin: 3px;
+  cursor: ${p => (p.$disabled ? 'default' : 'pointer')};
+  pointer-events: ${p => (p.$disabled ? 'none' : 'inherit')};
+  background: ${p => p.$theme.highlight1};
+  border: solid 2px ${p => (p.$highlighted ? p.$theme.accentColor : p.$theme.highlight2)};
+  ${p =>
+    !p.$disabled &&
+    `&:hover {
+        border: solid 2px ${p.$theme.accentColor};
+        color: ${p.$theme.accentColor};
+    }`}
+`;
+
+const CalendarCellDay = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+`;
+const CalendarCellDayNumber = styled.div<{
+  $today: boolean;
+  $theme: FrontendTheme['main'];
+}>`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  ${p =>
+    p.$today
+      ? `background-color: ${p.$theme.accentColor}aa; color: ${p.$theme.accentTextColor};`
+      : `background-color: ${p.$theme.highlight2}; color: ${p.$theme.textColor};`}
 `;

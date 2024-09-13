@@ -9,7 +9,6 @@ terraform {
 
 provider "aws" {
   region                   = "eu-west-3"
-  shared_credentials_files = ["./.aws-credentials"]
   default_tags {
     tags = {
       Project = "beltmatic"
@@ -20,7 +19,6 @@ provider "aws" {
 provider "aws" {
   alias                    = "us-east-1"
   region                   = "us-east-1"
-  shared_credentials_files = ["./.aws-credentials"]
   default_tags {
     tags = {
       Project = "beltmatic"
@@ -36,10 +34,6 @@ output "region" {
 data "aws_caller_identity" "current" {}
 output "account_id" {
   value = data.aws_caller_identity.current.account_id
-}
-
-data "aws_iam_roles" "administrator_roles" {
-  name_regex = "AdministratorAccess"
 }
 
 resource "aws_s3_bucket" "code" {
